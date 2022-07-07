@@ -1,0 +1,30 @@
+[
+  {
+    "essential": true,
+    "image": "${image}",
+    "name": "${app_name}",
+    "portMappings": [
+      {
+        "containerPort": 3000,
+        "hostPort": 3000
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "secretOptions": [],
+      "options": {
+        "awslogs-create-group": "true",
+        "awslogs-group": "/ecs/${app_name}",
+        "awslogs-region": "af-south-1",
+        "awslogs-stream-prefix": "ecs"
+      },
+      "memory": 50,
+      "cpu": 10
+    },
+    "healthCheck":{
+      "command": [ "CMD-SHELL", "curl -f http://localhost:3000/onedeploy/ping || exit 1" ],
+      "interval": 10,
+      "startPeriod": 60
+    }
+  }
+]

@@ -1,0 +1,53 @@
+[
+  {
+    "essential": true,
+    "image": "${image}",
+    "name": "${app_name}",
+    "portMappings": [
+      {
+        "containerPort": 3000,
+        "hostPort": 3000
+      }
+    ],
+    "logConfiguration": {
+      "logDriver":"awsfirelens",
+        "options": {
+          "Name": "cloudwatch",
+          "region": "af-south-1",
+          "log_group_name": "/ecs/${app_name}",
+          "auto_create_group": "true",
+          "log_stream_prefix": "firelens",
+          "log-driver-buffer-limit": "2097152" 
+      }
+    },
+    "dependsOn": [
+      {
+        "containerName": "log_router",
+        "condition": "START"
+      }
+    ],
+    "healthCheck":{
+      "command": [ "CMD-SHELL", "curl -f http://localhost:3000/onedeploy/ping || exit 1" ],
+      "interval": 10,
+      "startPeriod": 60
+    }
+  },
+  {
+    "essential": true,
+    "image": "928143927712.dkr.ecr.af-south-1.amazonaws.com/aws-for-fluent-bit:stable",
+    "name": "log_router",
+    "firelensConfiguration": {
+        "type": "fluentbit"
+    },
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/${app_name}-firelens",
+        "awslogs-region": "af-south-1",
+        "awslogs-stream-prefix": "firelens",
+        "awslogs-create-group": "true"
+      }
+    },
+    "memoryReservation": 50
+  }
+]

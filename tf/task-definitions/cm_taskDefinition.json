@@ -1,0 +1,41 @@
+[
+  {
+    "essential": true,
+    "image": "${image}",
+    "name": "${app_name}",
+    "portMappings": [
+      {
+        "containerPort": 3000,
+        "hostPort": 3000
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "secretOptions": [],
+      "options": {
+        "awslogs-create-group": "true",
+        "awslogs-group": "/ecs/${launch_type}/${app_name}",
+        "awslogs-region": "af-south-1",
+        "awslogs-stream-prefix": "ecs"
+      },
+      "memory": 512,
+      "cpu": 256
+    },
+    "healthCheck":{
+      "command": [ "CMD-SHELL", "wget -O /tmp/out http://localhost:3000/container-benchmark/ping || exit 1" ],
+      "interval": 10,
+      "startPeriod": 60
+    },
+    "environment": [
+      { "name": "DB_HOST", "value": ""},
+      { "name": "DB_NAME", "value": "${db_name}"},
+      { "name": "DB_USERNAME", "value": ""},
+      { "name": "DB_PASSWORD", "value": ""},
+      { "name": "DB_PORT", "value": "1433"},
+      { "name": "DEVELOPMENT", "value": "true"},
+      { "name": "LOG_LEVEL", "value": "debug"},
+      { "name": "SCHEMA_NAME", "value": "${db_name}"},
+      { "name": "LOG_LEVEL", "value": "debug"}
+    ]
+  }
+]

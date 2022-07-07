@@ -1,0 +1,33 @@
+[
+  {
+    "essential": true,
+    "image": "${image}",
+    "name": "${app_name}",
+    "portMappings": [
+      {
+        "containerPort": 3000,
+        "hostPort": 3000
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "secretOptions": [],
+      "options": {
+        "awslogs-create-group": "true",
+        "awslogs-group": "/ecs/${launch_type}/${app_name}",
+        "awslogs-region": "af-south-1",
+        "awslogs-stream-prefix": "ecs"
+      },
+      "memory": 512,
+      "cpu": 256
+    },
+    "healthCheck":{
+      "command": [ "CMD-SHELL", "wget -O /tmp/out http://localhost:3000/ || exit 1" ],
+      "interval": 10,
+      "startPeriod": 60
+    },
+    "environment": [
+      { "name": "EXECUTION_TYPE", "value": "${launch_type}"}
+    ]
+  }
+]
